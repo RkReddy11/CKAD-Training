@@ -1,4 +1,4 @@
-mperative configuration means that to describe the configuration of the resource, you execute a command from a terminal’s command prompt
+imperative configuration means that to describe the configuration of the resource, you execute a command from a terminal’s command prompt
 
 
 Creating a Pod in Kubernetes
@@ -24,6 +24,9 @@ kubectl create namespace rkreddy
 exposing the deployment
 
 kubectl expose deployment mydeployment --port=8080 --target-port=80 --type=LoadBalancer
+
+
+kubectl create namespace test-123 --dry-run -o yaml   -> to get the O/P in YAML Format
 
 
 
