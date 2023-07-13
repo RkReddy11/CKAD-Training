@@ -1,0 +1,8 @@
+Docker and containerd are both container runtimes, but they have different purposes and features.
+
+    Docker is a complete container solution that includes a CLI tool, a daemon, and a registry. It also provides a number of features that make it easy to create, manage, and deploy containers, such as image building, networking, and storage.
+    containerd is a lightweight container runtime that is designed to be modular and extensible. It does not include a CLI tool or a registry, but it can be used with a variety of other tools, such as Docker.
+
+Kubernetes uses containerd as its default container runtime because it is lightweight and efficient. It also provides a number of features that make it easy to manage containers in a Kubernetes cluster, such as support for multiple container runtimes, CRI (Container Runtime Interface), and CNI (Container Network Interface).
+
+In short, Docker is a more complete container solution, while containerd is a more lightweight and efficient container runtime. Kubernetes uses containerd as its default container runtime because it is lightweight, efficient, and provides a number of features that make it easy to manage containers in a Kubernetes cluster.
