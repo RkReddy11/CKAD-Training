@@ -1,0 +1,34 @@
+mperative configuration means that to describe the configuration of the resource, you execute a command from a terminal’s command prompt
+
+
+Creating a Pod in Kubernetes
+
+          <PodName>     <ImageName>
+              ^             ^
+              |             |
+kubectl run mypod --image=nginx
+
+Creating a deployment
+
+kubectl create deploy mydeployment --image nginx --replicas=3
+
+Scaling the deployment
+
+kubectl scale --replicas=10 deployment/mydeployment
+
+
+Creating the namespace
+
+kubectl create namespace rkreddy
+
+exposing the deployment
+
+kubectl expose deployment mydeployment --port=8080 --target-port=80 --type=LoadBalancer
+
+
+
+
+
+
+              
+              
