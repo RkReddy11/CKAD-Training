@@ -116,3 +116,6 @@ kubectl expose pod redis --port=6379 --name redis-service  -> exposing the redis
 
               
               
+Creating and exposing the pod through same command.
+
+kubectl run custom-nginx --image=nginx --port=8080
