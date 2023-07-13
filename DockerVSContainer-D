@@ -1,3 +1,20 @@
+A container runtime is a software component that runs containers on a host operating system. It is responsible for loading container images from a repository, monitoring local system resources, isolating system resources for use of a container, and managing container lifecycle.
+
+Here are some of the key tasks that a container runtime performs:
+
+    Loading container images: A container runtime loads container images from a repository, such as Docker Hub or Quay.io.
+    Isolating system resources: A container runtime isolates system resources for use by a container, such as CPU, memory, and storage. This ensures that each container has its own dedicated resources and cannot interfere with other containers.
+    Managing container lifecycle: A container runtime manages the lifecycle of a container, from creation to destruction. This includes starting, stopping, and restarting containers, as well as managing container logs.
+
+Some popular container runtimes include:
+
+    Docker: Docker is a popular container runtime that is used by many developers and businesses. It is a complete container solution that includes a CLI tool, a daemon, and a registry.
+    containerd: containerd is a lightweight container runtime that is designed to be modular and extensible. It is often used as the underlying container runtime for Kubernetes.
+    CRI-O: CRI-O is a lightweight container runtime that is designed to be compatible with the Kubernetes Container Runtime Interface (CRI).
+
+Container runtimes are an essential part of the container ecosystem. They provide the foundation for running containers on a host operating system and managing the lifecycle of containers.
+
+
 Docker and containerd are both container runtimes, but they have different purposes and features.
 
     Docker is a complete container solution that includes a CLI tool, a daemon, and a registry. It also provides a number of features that make it easy to create, manage, and deploy containers, such as image building, networking, and storage.
