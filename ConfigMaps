@@ -1,0 +1,71 @@
+n Kubernetes, a ConfigMap is an object used to store configuration data that can be used by applications running inside pods. It allows you to decouple the configuration from the application code and provides a way to manage and update the configuration independently.
+
+Let's understand this with an example:
+
+Imagine you have a web application that needs to connect to a database, and it requires the following configuration settings:
+
+Database host: db.example.com
+Database port: 5432
+Database username: myuser
+Database password: mypassword
+Instead of hard-coding these values directly into your application code, you can create a ConfigMap to store this configuration. Here's an example of how you can define a ConfigMap in Kubernetes:
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: myapp-config
+data:
+  database.host: db.example.com
+  database.port: "5432"
+  database.username: myuser
+  database.password: mypassword
+
+In this example, we create a ConfigMap named myapp-config. It contains four key-value pairs representing our configuration data.
+
+Now, let's say you have a deployment manifest for your web application. You can refer to the ConfigMap values in the deployment manifest using environment variables or volume mounts. Here's an example of how you can use the ConfigMap in a deployment:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp-container
+          image: myapp-image
+          env:
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: myapp-config
+                  key: database.host
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: myapp-config
+                  key: database.port
+          # Or you can use volume mounts to access the ConfigMap
+          volumeMounts:
+            - name: config-volume
+              mountPath: /config
+      volumes:
+        - name: config-volume
+          configMap:
+            name: myapp-config
+In this deployment example, we're using the ConfigMap values to set environment variables DB_HOST and DB_PORT in the container running our web application. These environment variables will be accessible within the application code, allowing it to connect to the database using the provided configuration.
+
+Alternatively, you can also mount the ConfigMap as a volume to access the configuration files directly in the container.
+
+By using ConfigMaps, you separate the configuration from the application code, making it easier to manage and update. If you need to change any configuration values, you can simply update the ConfigMap without modifying the application code or redeploying the application. The changes will be automatically reflected in the running pods using the updated configuration.
+
+
+
+
