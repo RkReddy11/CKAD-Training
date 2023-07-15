@@ -1,0 +1,24 @@
+ In Kubernetes manifest files, you can define commands and arguments for containers within a Pod or a Deployment. These commands and arguments allow you to specify the executable to run inside the container and provide additional parameters or flags to that executable.
+Commands: The command field is used to specify the executable to run inside the container. It is an array where the first element is the executable and subsequent elements are arguments. Here's an example:
+
+spec:
+  containers:
+    - name: my-container
+      image: nginx
+      command: ["sleep", "100"]
+
+here, sleep is an executable command and 100 is the argument.
+
+The args field is used to provide additional arguments or flags to the executable specified in the container's command. It is an array of strings where each string represents an argument. 
+
+spec:
+  containers:
+    - name: my-container
+      image: nginx
+      command: ["sleep"]
+      args: ["100"]
+
+It's important to note that when you provide a command in a manifest file, it overrides the default command defined in the container image. On the other hand, if you provide args, it appends the additional arguments to the default command.
+
+By using commands and arguments, you can customize the behavior of containers and pass specific configurations or parameters to the executable running inside them. This flexibility allows you to adapt container behavior based on your specific use cases and requirements.
+
