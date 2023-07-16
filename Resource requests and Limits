@@ -1,0 +1,47 @@
+In Kubernetes, resource requests and limits are used to specify the amount of CPU and memory resources that a container requires or can consume. These settings help Kubernetes manage resources efficiently and ensure that containers have the necessary resources to run effectively.
+
+Let's understand this with an example:
+
+Imagine you have a deployment with multiple pods running a web application. To define the resource requests and limits for the pods, you can use the following configuration:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp-container
+          image: myapp-image
+          resources:
+            requests:
+              cpu: 200m
+              memory: 512Mi
+            limits:
+              cpu: 500m
+              memory: 1Gi
+In this example, we set the following resource requests and limits for the containers:
+
+requests.cpu: The CPU resource request is set to 200m. This means that each container in the pod requires a minimum of 200 milliCPU (1 CPU core equals 1000 milliCPU) to run effectively. It helps Kubernetes scheduler allocate the necessary CPU resources for the pods.
+requests.memory: The memory resource request is set to 512Mi (512 megabytes). This ensures that each container in the pod has at least 512 megabytes of memory available for its operation. It helps Kubernetes scheduler allocate memory resources accordingly.
+limits.cpu: The CPU resource limit is set to 500m. This restricts each container to consume a maximum of 500 milliCPU. It ensures that containers don't exceed the specified CPU limit, preventing them from monopolizing CPU resources.
+limits.memory: The memory resource limit is set to 1Gi (1 gigabyte). This defines the maximum amount of memory that each container can use. It helps to prevent containers from using excessive memory and affecting the stability of other containers.
+The ideal way to define resource requests and limits for pods or deployments in Kubernetes depends on the specific requirements of your applications. Here are a few best practices to consider:
+
+Accurate Resource Requests: Set the resource requests based on the actual requirements of your application. It ensures that the scheduler allocates appropriate resources and prevents excessive resource contention.
+
+Reasonable Resource Limits: Define resource limits that provide a safety net for your applications. The limits should allow for bursts in resource consumption while preventing resource exhaustion or impacting other pods. Consider the resource usage patterns and scaling behavior of your application.
+
+Monitor and Tune: Continuously monitor the resource utilization of your pods and adjust the resource requests and limits accordingly. This helps optimize resource allocation and ensures efficient utilization of cluster resources.
+
+Benchmarking and Testing: Perform benchmarking and load testing to understand the resource needs of your applications under various scenarios. This helps in setting realistic requests and limits to handle expected workloads.
+
+It's essential to strike a balance between resource requests and limits to ensure optimal utilization of cluster resources while meeting the performance requirements of your applications. Regular monitoring, profiling, and fine-tuning are key to maintaining an efficient and stable Kubernetes environment.
