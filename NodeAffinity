@@ -1,0 +1,46 @@
+Node affinity in Kubernetes allows you to schedule pods based on more complex rules and conditions, beyond simple node selectors. It provides more granular control over pod placement by considering node labels, topology, or other node attributes.
+
+Let's understand this with an example:
+
+Suppose you have a Kubernetes cluster with nodes labeled as high-performance and low-performance, and you want to schedule a specific pod on nodes labeled as high-performance only if they have a specific GPU available. To achieve this, you can use a combination of Node Affinity, Taints, and Tolerations.
+
+Labeling Nodes:
+First, you need to label the nodes in the cluster to identify their performance characteristics. Here's an example of labeling a node named high-performance-node:
+
+kubectl label nodes high-performance-node performance=high
+In this example, the node high-performance-node is labeled with performance=high, indicating that it's a high-performance node.
+
+Applying Taint to a Node:
+Next, you can apply a taint to the high-performance node to indicate that it has a GPU available. Here's an example:
+kubectl taint nodes high-performance-node gpu=true:NoSchedule
+In this example, a taint is applied to the node high-performance-node with the key-value pair gpu=true. The taint's effect is set to NoSchedule, indicating that new pods cannot be scheduled on the node unless they tolerate this taint.
+
+Defining Tolerations and Node Affinity in a Pod:
+Finally, you define the tolerations and node affinity rules in the pod's manifest to specify the scheduling requirements. Here's an example:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: myapp-pod
+spec:
+  containers:
+    - name: myapp-container
+      image: myapp-image
+  tolerations:
+    - key: gpu
+      operator: Exists
+      effect: NoSchedule
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: performance
+                operator: In
+                values:
+                  - high
+In this example, the tolerations section is added to the pod's manifest to allow it to tolerate the GPU taint on the high-performance node. The affinity section is used to define the node affinity rules. It specifies that the pod should be scheduled on nodes with the label performance=high.
+
+By combining taints and tolerations with node affinity, you can effectively place pods on nodes that meet specific criteria. In this case, the pod will only be scheduled on nodes labeled as high-performance and tolerate the GPU taint. This ensures that the pod runs on high-performance nodes with a GPU available.
+
+This approach allows you to define more complex rules for pod placement, considering multiple factors such as node labels, taints, and tolerations. It provides flexibility in scheduling pods based on advanced criteria and helps optimize resource utilization within your Kubernetes cluster.
