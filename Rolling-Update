@@ -1,0 +1,44 @@
+In Kubernetes, a rolling update strategy is a mechanism used to update or upgrade a deployment or a set of pods in a controlled and gradual manner. It ensures that the application remains available during the update process by replacing pods gradually, one at a time, while maintaining a desired number of replicas.
+
+Let's understand the rolling update strategy with an example:
+
+Suppose you have a deployment named myapp-deployment with three replicas running a web application. You want to update the application to a new version without causing any downtime. Here's how you can achieve this using a rolling update strategy:
+
+Prepare the updated version:
+Build and push the updated version of your application to a container registry. This new version could include bug fixes, feature enhancements, or configuration changes.
+
+Update the Deployment:
+Modify the deployment configuration to use the new version of the container image. This triggers the rolling update process. Here's an example of a deployment configuration:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myapp-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: myapp
+  template:
+    metadata:
+      labels:
+        app: myapp
+    spec:
+      containers:
+        - name: myapp-container
+          image: myapp-image:v2
+In this example, the image field is updated to myapp-image:v2, which represents the new version of the application. The deployment configuration also specifies that there should be three replicas of the updated application.
+
+Rolling Update Process:
+Kubernetes manages the rolling update process automatically based on the configuration. It starts by creating new pods with the updated version while keeping the old pods running. The new pods are gradually introduced into the cluster, and the old pods are gradually terminated.
+
+During the rolling update, Kubernetes ensures that the desired number of replicas (in this case, three) is maintained at all times. It carefully manages the replacement of pods to avoid any downtime.
+
+Validation and Rollback:
+After completing the rolling update, you can perform validations to ensure the new version is running correctly. If any issues are detected, you can roll back the deployment to the previous version by updating the deployment configuration again.
+
+By using the rolling update strategy, you can safely update your applications without impacting availability. Kubernetes manages the process by gradually replacing old pods with new ones, ensuring a smooth transition and minimizing disruption.
+
+It's important to note that the rolling update strategy can be further customized by adjusting parameters such as the update strategy, max surge, and max unavailable. These parameters control the speed and behavior of the rolling update process, allowing you to fine-tune the update process based on your specific requirements.
+
+Overall, the rolling update strategy in Kubernetes provides a controlled and seamless approach to updating your applications while maintaining high availability and minimizing downtime.
