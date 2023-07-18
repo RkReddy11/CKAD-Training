@@ -1,0 +1,37 @@
+In Kubernetes, Liveness and Readiness Probes are mechanisms used to monitor the health and availability of pods running in a cluster. They allow Kubernetes to determine if a pod is running properly and ready to serve traffic. Liveness Probes are used to detect and restart unhealthy containers, while Readiness Probes are used to determine when a pod is ready to receive traffic.
+
+Let's dive into each probe type and their usage:
+
+Liveness Probe:
+Liveness Probes are used to check the health of a container within a pod. Kubernetes periodically sends a request to the specified endpoint within the container and examines the response. If the probe fails (e.g., the endpoint returns an error or takes too long to respond), Kubernetes considers the container to be in an unhealthy state. In such cases, Kubernetes restarts the container to attempt recovery.
+
+Here's an example of a Liveness Probe:
+
+livenessProbe:
+  httpGet:
+    path: /health
+    port: 8080
+  initialDelaySeconds: 10
+  periodSeconds: 15
+In this example, the Liveness Probe is configured to perform an HTTP GET request to the /health path on port 8080 of the container. It specifies an initial delay of 10 seconds after the container starts before the probe is initiated, and then repeats every 15 seconds.
+
+If the container's /health endpoint returns a non-2xx HTTP status code or times out, Kubernetes considers the container to be unhealthy and restarts it.
+
+Readiness Probe:
+Readiness Probes are used to determine when a container is ready to receive traffic. They are often used in scenarios where a pod needs some time to initialize or when it requires certain dependencies to be available before it can serve traffic. If the readiness probe fails, Kubernetes stops routing traffic to the pod until it passes the probe.
+
+Here's an example of a Readiness Probe:
+
+readinessProbe:
+  httpGet:
+    path: /status
+    port: 8080
+  initialDelaySeconds: 5
+  periodSeconds: 10
+In this example, the Readiness Probe is configured to perform an HTTP GET request to the /status path on port 8080 of the container. It specifies an initial delay of 5 seconds after the container starts before the probe is initiated, and then repeats every 10 seconds.
+
+If the container's /status endpoint returns a non-2xx HTTP status code or times out, Kubernetes considers the pod not ready to receive traffic.
+
+By using Liveness and Readiness Probes, you can ensure that containers within pods are healthy and ready to serve traffic. These probes help Kubernetes maintain the availability and reliability of your applications in the cluster. The configuration and endpoints to be probed can vary depending on your specific application and health checks.
+
+It's important to note that different probe types have different purposes. Liveness Probes focus on container health and automatic recovery, while Readiness Probes focus on pod readiness to receive traffic. By utilizing both probes effectively, you can ensure the proper functioning and availability of your pods in a Kubernetes cluster.
