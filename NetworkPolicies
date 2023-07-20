@@ -1,0 +1,104 @@
+In Kubernetes, Network Policies are a way to control the flow of network traffic between pods. They allow you to define rules that govern how pods communicate with each other within a cluster. Network Policies help enhance the security and isolation of pods, ensuring that only specific pods can communicate with each other based on defined rules.
+
+Why use Network Policies?
+By default, Kubernetes allows unrestricted communication between all pods within the same cluster. However, in some cases, you might want to restrict this communication to improve security and isolate sensitive workloads. Network Policies provide a way to enforce these restrictions.
+
+Understanding Network Policy Rules:
+Network Policies consist of a set of rules that define the allowed ingress (incoming) and egress (outgoing) traffic for pods with specific labels. Each rule can match on the labels of the source or destination pods and can specify the allowed ports and protocols.
+
+Example: Deny All Traffic:
+Let's start with a simple example to illustrate the concept. Suppose you want to deny all incoming and outgoing traffic for a specific set of pods.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-all-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: my-pod
+  policyTypes:
+    - Ingress
+    - Egress
+In this example:
+
+podSelector selects the pods to which the policy applies. Here, we target pods labeled with app: my-pod.
+policyTypes specifies the types of policies we want to apply. In this case, we want to apply both Ingress (incoming) and Egress (outgoing) policies.
+No ingress or egress rules are defined, so by default, all incoming and outgoing traffic is denied for pods labeled with app: my-pod.
+Example: Allow Specific Traffic:
+Now, let's allow specific traffic to the pods. Suppose you have a frontend service and a backend service, and you want to allow incoming traffic from the frontend service to the backend service.
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-backend-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: backend-service
+  ingress:
+    - from:
+        - podSelector:
+            matchLabels:
+              app: frontend-service
+      ports:
+        - port: 80
+        - port: 443
+In this example:
+
+podSelector selects the pods to which the policy applies. Here, we target pods labeled with app: backend-service.
+ingress specifies the ingress rules, defining allowed incoming traffic.
+The from field specifies the source pods from which the traffic is allowed. Here, we allow traffic from pods labeled with app: frontend-service.
+The ports field specifies the allowed ports (80 and 443) and protocols for the incoming traffic.
+Applying Network Policies:
+Once you define the NetworkPolicy YAML, you can apply it using kubectl apply -f <filename.yaml>.
+
+It's important to note that Network Policies are enforced by network plugins like Calico or Cilium, so you need to ensure your Kubernetes cluster has a network plugin that supports Network Policies. If your cluster does not have a compatible network plugin, Network Policies won't be enforced, and all traffic will be allowed by default.
+
+By using Network Policies in Kubernetes, you can improve the security and control the network communication between your pods, thereby ensuring a more robust and isolated environment for your applications.
+
+
+To create a NetworkPolicy in Kubernetes that allows traffic from the Internal application only to the payroll-service and db-service, you can use the following YAML manifest:
+
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: internal-policy
+spec:
+  podSelector:
+    matchLabels:
+      app: internal-application
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - podSelector:
+            matchLabels:
+              app: payroll-service
+      ports:
+        - port: 8080
+    - to:
+        - podSelector:
+            matchLabels:
+              app: db-service
+      ports:
+        - port: 3306
+In this manifest, we define a NetworkPolicy named internal-policy:
+
+podSelector selects the pods to which the policy applies. In this case, we match the pods with the label app: internal-application, which represents the Internal application.
+
+policyTypes specifies the type of policy, which is Egress. This means we are defining egress rules.
+
+egress defines the egress rules, allowing traffic from the Internal application to specific pods.
+
+The first egress rule allows traffic to pods with the label app: payroll-service on port 8080.
+
+The second egress rule allows traffic to pods with the label app: db-service on port 3306.
+
+Ensure that the payroll-service and db-service are properly labeled with app: payroll-service and app: db-service, respectively, so they can be matched by the NetworkPolicy.
+
+To apply this NetworkPolicy, save the YAML to a file, for example, internal-policy.yaml, and use the following command:
+
+kubectl apply -f internal-policy.yaml
+
+This will create the NetworkPolicy and enforce the specified egress rules, allowing traffic from the Internal application only to the payroll-service and db-service on the specified ports.
