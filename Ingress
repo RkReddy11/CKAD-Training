@@ -1,0 +1,99 @@
+In Kubernetes, an Ingress is an API object that manages external access to services within a cluster. It provides a way to route inbound traffic to different services based on the requested host or URL path, acting as an entry point to your cluster.
+
+Let's understand the concept of Ingress in Kubernetes with an example:
+
+Suppose you have multiple microservices running in your Kubernetes cluster, such as a frontend service, a backend service, and an API service. You want to expose these services to external users with different URLs or subdomains. Ingress allows you to achieve this by acting as a gateway and routing traffic to the appropriate services based on the requested URL.
+
+Here's an example of an Ingress manifest:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+    - host: frontend.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: frontend-service
+                port:
+                  number: 80
+    - host: api.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: api-service
+                port:
+                  number: 80
+
+In this example, we define an Ingress named my-ingress with two rules:
+
+The first rule routes traffic with the host frontend.example.com to the frontend-service running on port 80. Any request to frontend.example.com will be directed to the frontend service.
+
+The second rule routes traffic with the host api.example.com to the api-service running on port 80. Requests to api.example.com will be forwarded to the API service.
+
+By configuring these rules in the Ingress, you can expose different services with their own URLs or subdomains, making them accessible to external users.
+
+To make the Ingress work, you need to have an Ingress controller deployed in your cluster. The Ingress controller is responsible for implementing the Ingress rules and handling the incoming traffic. Popular Ingress controllers include NGINX Ingress Controller, Traefik, and HAProxy Ingress.
+
+Once the Ingress controller is set up and the Ingress resource is created, it will create the necessary rules and configurations in the underlying load balancer or reverse proxy to route the traffic to the respective services based on the specified host and path.
+
+It's important to note that for the Ingress to work, the cluster must have an external load balancer or an Ingress controller that supports the underlying infrastructure. Additionally, DNS records should be configured to point the desired hostnames or subdomains to the external IP address of the load balancer or Ingress controller.
+
+By utilizing Ingress in Kubernetes, you can easily manage external access to your services, route traffic based on host or URL path, and provide a seamless experience to external users accessing your cluster
+
+you can configure Ingress to route traffic for multiple services with different paths under the same domain (myapp.com). Each service will have its specific path, and Ingress will direct the incoming requests to the corresponding service based on the URL path.
+
+Here's an example of an Ingress manifest for your scenario:
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-ingress
+spec:
+  rules:
+    - host: myapp.com
+      http:
+        paths:
+          - path: /watch
+            pathType: Prefix
+            backend:
+              service:
+                name: watch-service
+                port:
+                  number: 80
+          - path: /play
+            pathType: Prefix
+            backend:
+              service:
+                name: play-service
+                port:
+                  number: 80
+          - path: /eat
+            pathType: Prefix
+            backend:
+              service:
+                name: eat-service
+                port:
+                  number: 80
+
+In this example, we define an Ingress named my-ingress with three rules:
+
+The first rule routes traffic with the path /watch to the watch-service running on port 80. Any request to myapp.com/watch will be directed to the watch service.
+
+The second rule routes traffic with the path /play to the play-service running on port 80. Requests to myapp.com/play will be forwarded to the play service.
+
+The third rule routes traffic with the path /eat to the eat-service running on port 80. Requests to myapp.com/eat will be directed to the eat service.
+
+By using the appropriate path configurations in the Ingress, you can expose multiple services under the same domain while still keeping them separate based on their respective URL paths.
+
+Remember, to make the Ingress work, you need to have an Ingress controller deployed in your cluster, and the DNS records should be configured to point myapp.com to the external IP address of the Ingress controller or load balancer. Additionally, each service (watch-service, play-service, eat-service) must be deployed and exposed as a Kubernetes service with the correct port configuration.
+
+With this Ingress configuration, users can access your services at myapp.com/watch, myapp.com/play, and myapp.com/eat, and Ingress will route the traffic to the appropriate service based on the requested URL path.
