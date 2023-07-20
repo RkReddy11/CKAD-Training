@@ -1,0 +1,102 @@
+In Kubernetes, Persistent Volumes (PV) and Persistent Volume Claims (PVC) are used to manage and abstract the storage resources of your cluster. PVs represent actual storage resources available in the cluster, while PVCs are requests for those storage resources made by pods. They provide a way to decouple storage provisioning from pod creation, allowing for more flexibility and dynamic allocation of storage.
+
+Persistent Volume (PV):
+A Persistent Volume (PV) is a storage resource in the cluster that is provisioned and managed by the cluster's administrator. It represents a piece of storage, such as a physical disk on a node or a network-attached storage system, that can be used by pods running in the cluster.
+
+A PV has its own lifecycle, independent of any pod using it. It can be created, pre-allocated, and managed by the cluster administrator, and it persists even if the pod using it is deleted.
+
+Example: PV YAML
+Here's a simple example of a PV YAML:
+
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: my-pv
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: slow
+  hostPath:
+    path: /data/my-pv
+In this example:
+
+capacity specifies the size of the PV, which is 5Gi (gigabytes) in this case.
+accessModes indicate the ways in which the PV can be accessed. ReadWriteOnce means the volume can be mounted read-write by a single node.
+storageClassName is an optional field used to link this PV with a StorageClass (not shown in this example).
+hostPath is the actual storage backend used by the PV. In this case, we use a local path on the node's filesystem (/data/my-pv). In a real cluster, you might use network-attached storage or cloud-based storage providers.
+Persistent Volume Claim (PVC):
+A Persistent Volume Claim (PVC) is a request for storage by a pod. It represents the desire of a pod to use a specific amount of storage with specific access modes. PVCs are created by developers or users and are used to "claim" a PV that satisfies the requested criteria.
+
+When a pod is created with a PVC, Kubernetes automatically binds the claim to an available PV that satisfies the PVC's requirements. This dynamic provisioning allows for efficient use of storage resources and separation of concerns between developers and administrators.
+
+Example: PVC YAML
+Here's a simple example of a PVC YAML:
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: my-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 3Gi
+  storageClassName: slow
+In this example:
+
+accessModes specifies the desired access mode for the storage. ReadWriteOnce means the PVC can be mounted read-write by a single node.
+resources.requests.storage defines the amount of storage requested, which is 3Gi (gigabytes) in this case.
+storageClassName is used to request a specific StorageClass that matches the PV's storageClassName from the previous example.
+Binding PV to PVC:
+Once a PVC is created, Kubernetes will automatically bind it to an available PV that meets the requested storage capacity, access modes, and other requirements specified in the PVC. If there's no suitable PV available, Kubernetes can dynamically provision a new PV for the PVC based on the defined StorageClass.
+
+By using PVs and PVCs, Kubernetes provides a robust and flexible way to manage storage resources in the cluster, allowing developers to request and use storage without worrying about the underlying details of storage provisioning and management.
+
+To use a Persistent Volume (PV) and a Persistent Volume Claim (PVC) in your pod deployment spec, you need to follow these steps:
+
+Create PV and PVC: First, create the PV and PVC using their respective YAML manifests. Make sure that the PV is bound to the PVC. You can apply the PV and PVC YAML using kubectl apply -f pv.yaml and kubectl apply -f pvc.yaml.
+
+Define Volume and Volume Mount in Pod Deployment Spec: In your pod deployment spec, you'll define a volume and a volumeMount for the container that needs access to the PVC. A volume is a reference to the PVC, and a volumeMount is where the container will mount that volume to access the persistent storage.
+
+Here's an example pod deployment spec:
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+    spec:
+      containers:
+      - name: my-container
+        image: my-app-image
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: my-persistent-storage
+          mountPath: /data
+      volumes:
+      - name: my-persistent-storage
+        persistentVolumeClaim:
+          claimName: my-pvc
+
+In this example:
+
+We define a Deployment named my-app with a single replica.
+In the template section, we specify the pod template.
+Under spec.containers, we define a container named my-container with its image and ports.
+We add a volumeMounts section to the container, where we mount the PVC (my-persistent-storage) to the path /data within the container. This allows the container to access the persistent storage provided by the PVC.
+Under spec.volumes, we define the volume that refers to the PVC. The persistentVolumeClaim field allows us to specify the name of the PVC (my-pvc) to use as persistent storage.
+Now, when the pod is created or updated, Kubernetes will automatically bind the PVC (my-pvc) to an available PV that satisfies the PVC's requirements. The container in the pod will then mount the bound PV to the specified mount path (/data), allowing the application within the container to read and write data to the persistent storage.
+
+Remember that the PVC and PV must have compatible access modes and storage requirements for the binding to be successful. Additionally, the pod's security context and the access mode of the PV should also be compatible for the volume to be mounted successfully.
