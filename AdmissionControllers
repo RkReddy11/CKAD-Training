@@ -1,0 +1,37 @@
+In Kubernetes, Admission Controllers are a set of plugins that intercept and validate requests to the API server before they are persisted into the cluster. They provide an extra layer of security and governance by allowing administrators to enforce policies and restrictions on various resources and operations within the cluster.
+
+How Admission Controllers Work:
+When a client (such as a user or a Kubernetes component) sends a request to the Kubernetes API server, the request goes through one or more Admission Controllers before the API server processes it. Each Admission Controller can examine, modify, or reject the request based on the defined rules and policies.
+
+Examples of Admission Controllers:
+Let's look at some common Admission Controllers and how they can be used:
+
+Namespace Lifecycle Admission Controller: This controller enforces policies related to namespaces, such as preventing the creation of certain namespaces or restricting naming conventions.
+
+ResourceQuota Admission Controller: This controller enforces resource limits for namespaces, preventing resource abuse and ensuring fair allocation of resources across namespaces.
+
+PodSecurityPolicy Admission Controller: This controller checks whether a pod's security context complies with defined security policies. For example, it can prevent the creation of pods with privileged access or host network access.
+
+Mutating Admission Controller: A mutating admission controller can modify incoming requests before they are stored. For example, a mutating admission controller can automatically inject sidecar containers or environment variables into pods.
+
+Validating Admission Controller: A validating admission controller can validate incoming requests and either approve or reject them based on specific conditions. For instance, it can validate labels, annotations, or fields within the resource and reject the request if they don't meet certain criteria.
+
+Enabling and Configuring Admission Controllers:
+The set of Admission Controllers active in a Kubernetes cluster can be configured in the API server's configuration file (kube-apiserver.yaml). By default, Kubernetes enables several built-in Admission Controllers, but you can customize and enable/disable them according to your requirements.
+
+Here's an example of how to enable the NamespaceLifecycle and ResourceQuota Admission Controllers:
+
+apiVersion: kube-apiserver.config.k8s.io/v1
+kind: APIServer
+...
+admissionControl:
+  - NamespaceLifecycle
+  - ResourceQuota
+This configuration enables the NamespaceLifecycle and ResourceQuota Admission Controllers, meaning that requests related to namespace lifecycle and resource quotas will be intercepted and validated by these controllers before being processed by the API server.
+
+Custom Admission Controllers:
+You can also develop your own custom Admission Controllers to enforce specific policies or custom logic in your Kubernetes cluster. Custom Admission Controllers can be written in Go and registered as plugins in the API server.
+
+However, it's essential to be cautious when using Admission Controllers, as they can significantly impact the behavior of your cluster and might lead to accidental request rejections or other unintended consequences. Always thoroughly test and validate your Admission Controllers before deploying them in production environments.
+
+In summary, Admission Controllers in Kubernetes play a critical role in enforcing policies and restrictions on resources and operations within the cluster. They allow administrators to ensure compliance, security, and governance in a Kubernetes environment, making it a powerful feature for managing and securing your cluster.
