@@ -1,0 +1,55 @@
+In Kubernetes, API Groups are used to organize related resources and provide a hierarchical structure to the Kubernetes API. They help in managing the growing number of resources and functionalities within Kubernetes by categorizing them into logical groups. Each API Group is associated with a unique version and contains a set of resources.
+
+Family Tree of API Groups:
+The API Groups can be represented as a family tree where the root node is the core group, and each branch represents a version of that group. Each API Group can have multiple versions, and each version can have its own set of resources.
+
+Here's an example of the family tree of API Groups in Kubernetes:
+
+core
+  └── v1
+  └── v1beta1
+apps
+  └── v1
+  └── v1beta1
+batch
+  └── v1
+  └── v1beta1
+extensions
+  └── v1beta1
+networking.k8s.io
+  └── v1
+  └── v1beta1
+...
+In this example:
+
+The root node is the core group, which contains resources like pods, services, namespaces, and more in its versions v1 and v1beta1.
+The apps, batch, and networking.k8s.io groups also have their own versions and sets of resources.
+Examples of API Groups and Their Resources:
+Let's look at some examples of API Groups and the resources they contain:
+
+core: The core group contains the fundamental resources in Kubernetes. Some examples of resources in the core group are:
+
+v1: pods, services, namespaces, configmaps, secrets, persistent volumes, etc.
+v1beta1: replicationcontrollers, serviceaccounts, limitranges, etc.
+apps: The apps group contains resources related to deployments, replicasets, and statefulsets, among others. Some examples of resources in the apps group are:
+
+v1: deployments, replicasets, daemonsets, statefulsets, etc.
+v1beta1: controllerrevisions, deployments, replicasets, statefulsets, etc.
+batch: The batch group contains resources related to batch processing. Some examples of resources in the batch group are:
+
+v1: jobs, cronjobs, etc.
+v1beta1: cronjobs, etc.
+networking.k8s.io: The networking.k8s.io group contains resources related to networking in Kubernetes. Some examples of resources in the networking.k8s.io group are:
+
+v1: ingresses, networkpolicies, etc.
+v1beta1: networkpolicies, etc.
+Using API Groups in API Requests:
+When making API requests to the Kubernetes API server, you need to specify the API Group and version in the API path to interact with the desired resources.
+
+For example, to get the list of pods in the core API Group with version v1, you would use the following API path:
+
+GET /api/v1/pods
+Similarly, to get the list of deployments in the apps API Group with version v1, you would use:
+
+GET /apis/apps/v1/deployments
+API Groups play a crucial role in structuring the Kubernetes API and help in maintaining backward compatibility when new resources and versions are introduced. They provide a clear and organized way to access and manage the vast array of resources and functionalities that Kubernetes offers.
