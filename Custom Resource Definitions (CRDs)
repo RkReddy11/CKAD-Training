@@ -1,0 +1,62 @@
+In Kubernetes, Custom Resource Definitions (CRDs) allow you to extend the Kubernetes API and create your own custom resources. CRDs enable you to define and use custom objects that are not part of the core Kubernetes API. This is a powerful feature that allows you to introduce new abstractions and resources that suit the specific needs of your applications and workloads.
+
+How CRDs Work:
+CRDs are essentially Kubernetes API extensions. When you create a CRD, you define a new resource type along with its schema (structure). After the CRD is registered with the Kubernetes API server, you can start using the custom resources of that type as if they were native to Kubernetes.
+
+Example of a CRD:
+Let's walk through an example of creating a simple CRD named MyApp. The custom resource MyApp will have two properties: name and replicas.
+
+Define the CRD:
+# myapp-crd.yaml
+
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  name: myapps.example.com
+spec:
+  group: example.com
+  versions:
+    - name: v1
+      served: true
+      storage: true
+  scope: Namespaced
+  names:
+    plural: myapps
+    singular: myapp
+    kind: MyApp
+    shortNames:
+    - ma
+In this YAML manifest:
+
+group is the API group under which the CRD is registered. It can be any string, but usually, it is a domain name in reverse order, like example.com.
+versions specify the supported versions of the CRD. In this case, we define a single version named v1 that is served and stored.
+scope defines the scope of the CRD, whether it's Namespaced (limited to a specific namespace) or Cluster-wide.
+names contains the metadata for the CRD, such as its plural, singular, and kind names.
+Create the CRD:
+Apply the CRD YAML using kubectl apply -f myapp-crd.yaml.
+
+Use the CRD:
+Now that the CRD is registered, you can create custom resources of the type MyApp.
+
+# myapp-instance.yaml
+
+apiVersion: example.com/v1
+kind: MyApp
+metadata:
+  name: myapp-instance
+spec:
+  name: my-app
+  replicas: 3
+In this YAML manifest, we create a custom resource instance named myapp-instance of type MyApp, and we specify its properties name and replicas.
+
+Managing Custom Resources:
+After creating custom resources, you can manage them just like any other Kubernetes resources using kubectl commands:
+
+To create a custom resource instance: kubectl apply -f myapp-instance.yaml
+To get custom resources: kubectl get myapps
+To get a specific custom resource instance: kubectl get myapp myapp-instance
+To delete a custom resource instance: kubectl delete myapp myapp-instance
+Operators:
+CRDs are often used in conjunction with Operators. Operators are software extensions to Kubernetes that help automate the management of custom resources. They are controllers that watch for changes in custom resources and act upon them to ensure desired states are achieved. Operators are particularly useful for complex applications that require additional lifecycle management beyond what standard Kubernetes resources provide.
+
+In summary, CRDs empower you to extend Kubernetes with custom resources tailored to your application's requirements. They provide a flexible and scalable way to introduce new abstractions and manage your application-specific resources seamlessly within the Kubernetes ecosystem.
