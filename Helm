@@ -1,0 +1,97 @@
+Helm is a package manager for Kubernetes that simplifies the deployment and management of applications on a Kubernetes cluster. It allows you to define, install, and upgrade complex Kubernetes applications using pre-configured packages called Helm Charts. Helm helps you avoid the complexity of managing multiple Kubernetes manifests and makes it easier to share and reproduce application configurations across different environments.
+
+Helm Components:
+
+Helm Client: The Helm client is a command-line tool that runs on your local machine. It interacts with the Kubernetes API server and the Helm Tiller server (if installed) to manage charts and deployments.
+
+Helm Charts: Helm Charts are packages that contain pre-configured Kubernetes manifest files, called templates, along with default values, configurations, and dependency information. Charts make it easy to deploy applications with consistent configurations.
+
+Helm Tiller (Deprecated): Previously, Helm used a server-side component called Tiller to interact with the Kubernetes API server. However, Tiller has been deprecated, and Helm now uses direct Kubernetes API calls, making it more secure and easier to manage.
+
+Helm Chart Structure:
+
+A Helm Chart is structured in the following way:
+
+my-chart/
+  ├── Chart.yaml        # Metadata about the chart
+  ├── values.yaml       # Default values for the chart
+  ├── templates/        # Directory containing Kubernetes manifests (templates)
+  │   ├── deployment.yaml
+  │   ├── service.yaml
+  │   └── ...
+  └── ...
+Helm Chart Example:
+
+Let's consider an example of a simple Helm Chart to deploy an Nginx web server on a Kubernetes cluster.
+
+Step 1: Create a new Helm Chart
+Run the following command to create a new Helm Chart named my-nginx:
+
+helm create my-nginx
+Step 2: Modify the Chart.yaml
+Open the Chart.yaml file and set the metadata for the Helm Chart:
+
+# Chart.yaml
+apiVersion: v2
+name: my-nginx
+version: 0.1.0
+description: A Helm Chart for deploying Nginx web server.
+
+Step 3: Define Default Values
+Open the values.yaml file and define default values for the Nginx deployment:
+# values.yaml
+replicaCount: 2
+image:
+  repository: nginx
+  tag: stable
+  pullPolicy: IfNotPresent
+service:
+  type: ClusterIP
+  port: 80
+
+Step 4: Create Templates
+Modify the templates/deployment.yaml and templates/service.yaml files to define the Kubernetes resources for the Nginx deployment and service.
+
+# templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "my-nginx.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ include "my-nginx.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "my-nginx.fullname" . }}
+    spec:
+      containers:
+      - name: nginx
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        ports:
+        - containerPort: 80
+---
+# templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "my-nginx.fullname" . }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: 80
+  selector:
+    app: {{ include "my-nginx.fullname" . }}
+
+Step 5: Install the Chart
+To install the Helm Chart, run the following command:
+
+helm install my-nginx ./my-nginx
+Step 6: Upgrade the Chart
+To upgrade the Nginx version in the Helm Chart, modify the values.yaml file and run the following command:
+
+helm upgrade my-nginx ./my-nginx
+With Helm and Helm Charts, you can manage complex Kubernetes applications effortlessly, and version control and share configurations, making application deployments more streamlined and consistent across different environments.
