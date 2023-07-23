@@ -1,0 +1,133 @@
+1. Blue-Green Deployment Strategy:
+
+Explanation:
+Blue-Green deployment is a technique to achieve zero-downtime deployments by maintaining two identical environments: the "Blue" environment (current version) and the "Green" environment (new version). Once the new version (Green) is tested and ready, traffic is switched from the old version (Blue) to the new version instantly. This approach ensures a smooth transition and allows you to roll back easily if any issues arise.
+
+YAML Manifests:
+Here's an example of how you can implement the Blue-Green deployment strategy in Kubernetes using Deployments and Services:
+
+Step 1: Deploy the Blue (Current) Version
+
+# blue-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: blue-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+      version: blue
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: blue
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app:1.0
+        ports:
+        - containerPort: 80
+Step 2: Expose Blue Version with a Service
+
+# blue-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: blue-app-service
+spec:
+  selector:
+    app: my-app
+    version: blue
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+Step 3: Deploy the Green (New) Version
+
+# green-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: green-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: my-app
+      version: green
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: green
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app:2.0
+        ports:
+        - containerPort: 80
+Step 4: Expose Green Version with a Service
+
+# green-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: green-app-service
+spec:
+  selector:
+    app: my-app
+    version: green
+  ports:
+  - port: 80
+    targetPort: 80
+  type: ClusterIP
+Step 5: Traffic Switch (Blue to Green)
+Update the Service's selector to switch traffic to the new version:
+
+kubectl apply -f green-service.yaml
+kubectl delete service blue-app-service
+2. Canary Deployment Strategy:
+
+Explanation:
+Canary deployment is a progressive rollout strategy where a new version is deployed to a small subset of users or servers, allowing you to test its performance in a real production environment before rolling it out to the entire user base. This approach helps identify any potential issues and reduces the impact of possible failures.
+
+YAML Manifests:
+Here's an example of how you can implement the Canary deployment strategy in Kubernetes using Deployments:
+
+Step 1: Deploy the Canary Version (Limited Replicas)
+
+# canary-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: canary-app
+spec:
+  replicas: 2   # Only 2 replicas for Canary version
+  selector:
+    matchLabels:
+      app: my-app
+  template:
+    metadata:
+      labels:
+        app: my-app
+        version: canary
+    spec:
+      containers:
+      - name: my-app-container
+        image: my-app:2.0  # New version for Canary deployment
+        ports:
+        - containerPort: 80
+Step 2: Gradual Rollout of Canary Version
+Increase the number of replicas for the Canary deployment over time to gradually expose more users to the new version:
+
+kubectl apply -f canary-deployment.yaml
+Step 3: Monitor and Validate
+Monitor the performance and behavior of the Canary version. If it performs well and passes validation, proceed to the next step.
+
+Step 4: Full Rollout or Rollback
+If the Canary version performs well, increase the number of replicas for the main Deployment (Green version) to expose more users to the new version. If any issues arise during the Canary phase, quickly reduce the number of replicas or roll back to the previous version.
+
+Note: In practice, you may need to use more sophisticated deployment strategies, such as traffic splitting and service mesh features, to perform canary deployments effectively. The examples above demonstrate the basic idea of Blue-Green and Canary deployments, but actual implementations may vary depending on your specific requirements and tools available in your Kubernetes ecosystem.
