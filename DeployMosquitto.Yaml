@@ -78,14 +78,14 @@ spec:
           ports:
             - containerPort: 1883
 
-Explanation:
+#Explanation:
 
-This part defines a Deployment named mosquitto that will create and manage a replica of the Mosquitto application (MQTT broker).
-The Deployment ensures that there is always one replica (replicas: 1) of the Mosquitto container running.
-The Deployment uses a selector with the app: mosquitto label to identify the pods that are part of this deployment.
-The pod template under the spec section of the Deployment defines the configuration for the pods that will be created.
-The container within the pod is named mosquitto and uses the image eclipse-mosquitto:1.6.2.
-The container exposes port 1883, which is likely the port used for MQTT communication.
-The volumeMounts section mounts two volumes into the container: mosquitto-conf and mosquitto-secret. These volumes are used to provide configuration files and secrets to the container.
-The volumes section defines the actual volumes used in the pod. Two volumes are defined: mosquitto-conf and mosquitto-secret, and they are associated with the corresponding ConfigMap and Secret created earlier.
-In summary, the YAML file defines a Kubernetes Deployment that runs a single replica of the Mosquitto MQTT broker container. The Deployment uses a ConfigMap to provide the mosquitto.conf configuration file to the container and a Secret to provide some sensitive data in the secret.file.
+#This part defines a Deployment named mosquitto that will create and manage a replica of the Mosquitto application (MQTT broker).
+#The Deployment ensures that there is always one replica (replicas: 1) of the Mosquitto container running.
+#The Deployment uses a selector with the app: mosquitto label to identify the pods that are part of this deployment.
+#The pod template under the spec section of the Deployment defines the configuration for the pods that will be created.
+#The container within the pod is named mosquitto and uses the image eclipse-mosquitto:1.6.2.
+#The container exposes port 1883, which is likely the port used for MQTT communication.
+#The volumeMounts section mounts two volumes into the container: mosquitto-conf and mosquitto-secret. These volumes are used to provide configuration files and secrets to the container.
+#The volumes section defines the actual volumes used in the pod. Two volumes are defined: mosquitto-conf and mosquitto-secret, and they are associated with the corresponding ConfigMap and Secret created earlier.
+#In summary, the YAML file defines a Kubernetes Deployment that runs a single replica of the Mosquitto MQTT broker container. The Deployment uses a ConfigMap to provide the mosquitto.conf configuration file to the container and a Secret to provide some sensitive data in the secret.file.
